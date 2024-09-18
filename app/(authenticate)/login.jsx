@@ -16,6 +16,7 @@ import { Link } from "expo-router";
 
 const login = () => {
   const [PasswordSee, setPasswordSee] = React.useState(true);
+  const [formData, setFormData] = React.useState({});
   return (
     <SafeAreaView
       style={{ flex: 1, backgroundColor: "white", alignItems: "center" }}
@@ -47,6 +48,10 @@ const login = () => {
                 placeholder="Enter your email"
                 placeholderTextColor={"gray"}
                 style={{ paddingHorizontal: 10 }}
+                value={formData.email}
+                onChangeText={(text) =>
+                  setFormData({ ...formData, email: text })
+                }
               />
             </View>
           </View>
@@ -61,6 +66,10 @@ const login = () => {
               placeholderTextColor={"gray"}
               secureTextEntry={PasswordSee}
               style={{ flex: 1, paddingHorizontal: 10 }}
+              value={formData.password}
+              onChangeText={(text) => {
+                setFormData({ ...formData, password: text });
+              }}
             />
             <TouchableOpacity onPress={() => setPasswordSee(!PasswordSee)}>
               <Ionicons
@@ -112,7 +121,7 @@ const login = () => {
                 Don't have an account?{" "}
                 <Link href="/Register" style={{ color: "#0077b5" }}>
                   Register
-                </Link>{" "}
+                </Link>
               </Text>
             </Pressable>
           </View>

@@ -1,12 +1,157 @@
-import { View, Text } from "react-native";
+import {
+  View,
+  SafeAreaView,
+  Image,
+  Text,
+  KeyboardAvoidingView,
+  TextInput,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Pressable,
+} from "react-native";
 import React from "react";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { Link } from "expo-router";
 
 const Register = () => {
+  const [PasswordSee, setPasswordSee] = React.useState(true);
+  const [formData, setFormData] = React.useState({});
   return (
-    <View>
-      <Text>Register</Text>
-    </View>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: "white", alignItems: "center" }}
+    >
+      <View>
+        <Image
+          style={{ width: 150, height: 100, resizeMode: "contain" }}
+          source={{
+            uri: "https://www.freepnglogos.com/uploads/linkedin-logo-transparent-png-25.png",
+          }}
+        />
+      </View>
+      <ScrollView>
+        <KeyboardAvoidingView behavior="padding">
+          <View style={{ alignItems: "center" }}>
+            <Text
+              style={{
+                fontSize: 20,
+                fontWeight: "bold",
+                color: "#0077b5",
+              }}
+            >
+              Create an account
+            </Text>
+          </View>
+          <View style={{ marginTop: 60 }}>
+            <View style={styles.inputSectionContainner}>
+              <TextInput
+                placeholder="Enter your name"
+                placeholderTextColor={"gray"}
+                style={{ paddingHorizontal: 10 }}
+                value={formData.name}
+                onChangeText={(text) =>
+                  setFormData({ ...formData, name: text })
+                }
+              />
+            </View>
+            <View style={styles.inputSectionContainner}>
+              <TextInput
+                placeholder="Enter your email"
+                placeholderTextColor={"gray"}
+                style={{ paddingHorizontal: 10 }}
+                value={formData.email}
+                onChangeText={(text) =>
+                  setFormData({ ...formData, email: text })
+                }
+              />
+            </View>
+          </View>
+          <View
+            style={[
+              styles.inputSectionContainner,
+              { flexDirection: "row", alignItems: "center" },
+            ]}
+          >
+            <TextInput
+              placeholder="Enter your password"
+              placeholderTextColor={"gray"}
+              secureTextEntry={PasswordSee}
+              style={{ flex: 1, paddingHorizontal: 10 }}
+              value={formData.password}
+              onChangeText={(text) => {
+                setFormData({ ...formData, password: text });
+              }}
+            />
+            <TouchableOpacity onPress={() => setPasswordSee(!PasswordSee)}>
+              <Ionicons
+                name={PasswordSee ? "eye-off" : "eye"}
+                size={24}
+                color="black"
+              />
+            </TouchableOpacity>
+          </View>
+          {/* <View
+            style={{
+              marginTop: 12,
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <Text> Keep me Logged in</Text>
+            <Text style={{ color: "#007fff", fontWeight: "500" }}>
+              Forgot Password
+            </Text>
+          </View> */}
+          <View style={{ marginTop: 40 }}>
+            <Pressable
+              style={{
+                width: 300,
+                backgroundColor: "#0077b5",
+                borderRadius: 5,
+                marginLeft: "auto",
+                marginRight: "auto",
+                padding: 15,
+              }}
+            >
+              <Text
+                style={{
+                  color: "white",
+                  textAlign: "center",
+                  fontSize: 16,
+                  fontWeight: "600",
+                }}
+              >
+                Login
+              </Text>
+            </Pressable>
+            <Pressable style={{ marginTop: 15 }}>
+              <Text
+                style={{ textAlign: "center", fontSize: 16, color: "gray" }}
+              >
+                Already have an account?
+                <Link href="/login" style={{ color: "#0077b5" }}>
+                  Login
+                </Link>
+              </Text>
+            </Pressable>
+          </View>
+        </KeyboardAvoidingView>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
-
 export default Register;
+
+const styles = StyleSheet.create({
+  inputSectionContainner: {
+    padding: 10,
+    height: 50,
+    width: 300,
+    borderColor: "#0077b5",
+    backgroundColor: "#f2f2f2",
+    marginVertical: 10,
+    borderWidth: 1,
+    borderRadius: 5,
+  },
+});
