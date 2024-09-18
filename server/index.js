@@ -5,6 +5,7 @@ import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import cors from "cors";
 import bodyParser from "body-parser";
+import userRoute from "./routes/user.routes.js";
 
 dotenv.config();
 
@@ -15,6 +16,8 @@ app.use(express.json());
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+app.use("/linkdinapp/api/v1/user" , userRoute)
 
 mongoose
   .connect(process.env.MONGO_URI)
