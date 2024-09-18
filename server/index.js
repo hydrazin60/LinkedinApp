@@ -1,11 +1,12 @@
 import express from "express";
 import mongoose from "mongoose";
 import crypto from "crypto";
-import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import cors from "cors";
 import bodyParser from "body-parser";
 import userRoute from "./routes/user.routes.js";
+import User from "./models/userAuth.models.js";
+import { verifyEmail } from "./controllers/user.controllers.js";
 
 dotenv.config();
 
@@ -17,7 +18,9 @@ app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-app.use("/linkdinapp/api/v1/user" , userRoute)
+app.use("/linkdinapp/api/v1/user", userRoute);
+
+ 
 
 mongoose
   .connect(process.env.MONGO_URI)

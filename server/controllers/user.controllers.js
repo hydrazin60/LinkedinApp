@@ -1,5 +1,10 @@
 import User from "../models/userAuth.models.js";
 import bcrypt from "bcrypt";
+import crypto from "crypto";
+import nodemailer from "nodemailer";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 export const Register = async (req, res) => {
   try {
@@ -16,21 +21,25 @@ export const Register = async (req, res) => {
     if (existingUser) {
       return res.status(400).json({
         success: false,
-        message: "User already exists! Please login",
+        message: "Email already registered! Please login",
       });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 4);
+    const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await User.create({
       name,
       email,
       password: hashedPassword,
     });
 
+    newUser.verificationToken = crypto.randomBytes(20).toString("hex");
     await newUser.save();
+
+    await sendVerificationEmail(newUser.email, newUser.verificationToken);
+
     return res.status(201).json({
       success: true,
-      message: `Welcome ${newUser.name} to our community!`,
+      message: `Registered successfully! Please verify your email. Click on the link sent to your email.`,
     });
   } catch (error) {
     console.log(`Register error: ${error.message}`);
@@ -41,4 +50,52 @@ export const Register = async (req, res) => {
   }
 };
 
- 
+const sendVerificationEmail = async (email, verificationToken) => {
+  try {
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL,
+        pass: process.env.PASSWORD,
+      },
+    });
+
+    const mailOptions = {
+      from: process.env.EMAIL,
+      to: email,
+      subject: "Verify your email",
+      text: `Click on the link to verify your email: http://localhost:4000/linkdinapp/api/v1/user/verify/${verificationToken}`,
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log("Verification email sent successfully");
+  } catch (error) {
+    console.error("Error sending the verification email:", error.message);
+  }
+};
+
+export const verifyEmail = async (req, res) => {
+  try {
+    const token = req.params.token;
+    const user = await User.findOne({ verificationToken: token });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+    user.verified = true;
+    user.verificationToken = "";
+    await user.save();
+    return res.status(200).json({
+      success: true,
+      message: `Welcome ${user.name}, your email is verified.`,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: `Email verification failed: ${error.message}`,
+    });
+  }
+};
