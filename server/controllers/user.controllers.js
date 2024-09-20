@@ -5,18 +5,15 @@ import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 
 dotenv.config();
-
 export const Register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
-
     if (!name || !email || !password) {
       return res.status(409).json({
         success: false,
         message: "All fields are required",
       });
     }
-
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({
@@ -24,19 +21,15 @@ export const Register = async (req, res) => {
         message: "Email already registered! Please login",
       });
     }
-
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await User.create({
       name,
       email,
       password: hashedPassword,
     });
-
     newUser.verificationToken = crypto.randomBytes(20).toString("hex");
     await newUser.save();
-
     await sendVerificationEmail(newUser.email, newUser.verificationToken);
-
     return res.status(201).json({
       success: true,
       message: `Registered successfully! Please verify your email. Click on the link sent to your email.`,
@@ -66,7 +59,6 @@ const sendVerificationEmail = async (email, verificationToken) => {
       subject: "Verify your email",
       text: `Click on the link to verify your email: http://localhost:4000/linkdinapp/api/v1/user/verify/${verificationToken}`,
     };
-
     await transporter.sendMail(mailOptions);
     console.log("Verification email sent successfully");
   } catch (error) {
@@ -78,7 +70,6 @@ export const verifyEmail = async (req, res) => {
   try {
     const token = req.params.token;
     const user = await User.findOne({ verificationToken: token });
-
     if (!user) {
       return res.status(404).json({
         success: false,
