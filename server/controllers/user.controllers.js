@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
+import jwt from "jsonwebtoken";
 
 dotenv.config();
 export const Register = async (req, res) => {
@@ -90,3 +91,47 @@ export const verifyEmail = async (req, res) => {
     });
   }
 };
+
+export const Login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(409).json({
+        success: false,
+        message: "All fields are required",
+      });
+    }
+    const existingUser = await User.findOne({ email });
+    if (!existingUser) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found! plear register",
+      });
+    }
+
+    const ispasswordMatch = await bcrypt.compare(
+      password,
+      existingUser.password
+    );
+    if (!ispasswordMatch) {
+      console.log(`Password does not match: ${error.message}`);
+      return res.status(401).json({
+        success: false,
+        message: `Password does not match! ${error.message}`,
+      });
+    }
+    const token = jwt.sign(
+      { userId: existingUser._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "360d" }
+    );
+    res.status(200).json({ token });
+  } catch (error) {
+    console.log(`Login failed: ${error.message}`);
+    res.status(500).json({
+      success: false,
+      message: `Login failed: ${error.message}`,
+    });
+  }
+};
+

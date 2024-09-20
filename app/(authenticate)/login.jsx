@@ -13,10 +13,15 @@ import {
 import React from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Link } from "expo-router";
+import axios from "axios";
 
 const login = () => {
   const [PasswordSee, setPasswordSee] = React.useState(true);
   const [formData, setFormData] = React.useState({});
+  const handleLogin = () => {
+
+    axios.post()
+  };
   return (
     <SafeAreaView
       style={{ flex: 1, backgroundColor: "white", alignItems: "center" }}
@@ -93,7 +98,7 @@ const login = () => {
             </Text>
           </View>
           <View style={{ marginTop: 80 }}>
-            <Pressable
+            <TouchableOpacity
               style={{
                 width: 300,
                 backgroundColor: "#0077b5",
@@ -102,6 +107,7 @@ const login = () => {
                 marginRight: "auto",
                 padding: 15,
               }}
+              onPress={handleLogin}
             >
               <Text
                 style={{
@@ -113,7 +119,7 @@ const login = () => {
               >
                 Login
               </Text>
-            </Pressable>
+            </TouchableOpacity>
             <Pressable style={{ marginTop: 15 }}>
               <Text
                 style={{ textAlign: "center", fontSize: 16, color: "gray" }}
