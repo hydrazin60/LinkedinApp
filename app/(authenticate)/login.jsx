@@ -9,19 +9,33 @@ import {
   ScrollView,
   TouchableOpacity,
   Pressable,
+  Alert,
 } from "react-native";
 import React from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const login = () => {
   const [PasswordSee, setPasswordSee] = React.useState(true);
   const [formData, setFormData] = React.useState({});
-  const handleLogin = () => {
 
-    axios.post()
+  const handleLogin = () => {
+    axios
+      .post("http://192.168.18.13:4000/linkdinapp/api/v1/user/login", formData)
+      .then((res) => {
+        const token = res.data.token;
+        AsyncStorage.setItem("authToken", token);
+        router.push("/home");
+        setFormData({ email: "", password: "" });
+      })
+      .catch((error) => {
+        console.log("Login failed", error);
+        Alert.alert("Login failed", "Invalid email or password");
+      });
   };
+
   return (
     <SafeAreaView
       style={{ flex: 1, backgroundColor: "white", alignItems: "center" }}
@@ -136,6 +150,7 @@ const login = () => {
     </SafeAreaView>
   );
 };
+
 export default login;
 
 const styles = StyleSheet.create({
