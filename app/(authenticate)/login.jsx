@@ -48,7 +48,7 @@ const login = () => {
         Alert.alert("Login failed", "Invalid email or password");
       });
   };
-  
+
   return (
     <SafeAreaView
       style={{ flex: 1, backgroundColor: "white", alignItems: "center" }}
