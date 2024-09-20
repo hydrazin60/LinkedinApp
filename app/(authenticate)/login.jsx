@@ -11,7 +11,7 @@ import {
   Pressable,
   Alert,
 } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Link, router } from "expo-router";
 import axios from "axios";
@@ -21,13 +21,26 @@ const login = () => {
   const [PasswordSee, setPasswordSee] = React.useState(true);
   const [formData, setFormData] = React.useState({});
 
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      try {
+        const token = await AsyncStorage.getItem("authToken");
+        if (token) {
+          router.replace("/home");
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    checkLoginStatus();
+  }, []);
+
   const handleLogin = () => {
     axios
       .post("http://192.168.18.13:4000/linkdinapp/api/v1/user/login", formData)
       .then((res) => {
         const token = res.data.token;
         AsyncStorage.setItem("authToken", token);
-        router.push("/home");
         setFormData({ email: "", password: "" });
       })
       .catch((error) => {
@@ -35,7 +48,7 @@ const login = () => {
         Alert.alert("Login failed", "Invalid email or password");
       });
   };
-
+  
   return (
     <SafeAreaView
       style={{ flex: 1, backgroundColor: "white", alignItems: "center" }}
