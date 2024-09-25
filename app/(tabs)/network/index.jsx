@@ -1,10 +1,10 @@
 import { View, Text } from "react-native";
 import React from "react";
 
-export default function   home() {
+export default function network() {
   return (
     <View>
-      <Text>index hello </Text>
+      <Text>network</Text>
     </View>
   );
 }
